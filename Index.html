@@ -2,174 +2,192 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Para mi Novio ❤️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         body {
-            background-color: #fce4ec;
+            background-color: #ffe6ea; /* Rosa claro */
             height: 100vh;
-            width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* Evita scroll */
+            overflow: hidden;
             margin: 0;
-            font-family: 'Pacifico', cursive;
-            touch-action: none; /* Mejora la respuesta táctil */
+            font-family: 'Montserrat', sans-serif;
         }
 
+        /* --- Lluvia de Corazones de fondo (Ambiente) --- */
+        .heart-rain {
+            position: fixed;
+            top: -10vh;
+            color: #ff8ba7; /* Rosa más oscuro para los corazones de fondo */
+            opacity: 0.5;
+            font-size: 20px;
+            animation: fall linear forwards;
+            z-index: 0;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        /* El contenedor principal */
         .container {
             position: relative;
-            /* Ajuste para que quede centrado visualmente en móvil */
-            margin-top: 50px; 
-            transform: scale(0.9); /* Un poco más pequeño por defecto para pantallas chicas */
+            margin-top: 120px; /* Espacio para que suba la carta */
+            z-index: 10;
         }
 
-        /* --- El Sobre --- */
+        /* --- Estructura del Sobre --- */
         .envelope-wrapper {
             position: relative;
             background: #ff3333;
-            width: 300px;
-            height: 200px;
+            width: 350px; /* Un poco más grande */
+            height: 230px;
             margin: 0 auto;
             border-bottom-left-radius: 10px;
             border-bottom-right-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
             cursor: pointer;
-            z-index: 5;
         }
 
+        /* Solapa (tapa) que se abre */
         .envelope-flap {
             position: absolute;
             top: 0;
             left: 0;
             width: 0;
             height: 0;
-            border-left: 150px solid transparent;
-            border-right: 150px solid transparent;
-            border-top: 110px solid #ff4d4d;
+            border-left: 175px solid transparent;
+            border-right: 175px solid transparent;
+            border-top: 130px solid #ff5c5c; /* Color de la tapa cerrada */
             transform-origin: top;
-            transition: transform 0.6s ease-in-out, z-index 0.6s;
+            transition: transform 0.8s ease-in-out, z-index 0.8s;
             z-index: 6;
         }
 
+        /* Bolsillo del frente (para tapar la carta) */
         .envelope-pocket {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 0;
             height: 0;
-            border-left: 150px solid #e60000;
-            border-right: 150px solid #e60000;
-            border-bottom: 100px solid #cc0000;
-            border-top: 100px solid transparent;
+            border-left: 175px solid #e60000;
+            border-right: 175px solid #e60000;
+            border-bottom: 115px solid #cc0000;
+            border-top: 115px solid transparent;
             border-bottom-left-radius: 10px;
             border-bottom-right-radius: 10px;
             z-index: 7;
         }
 
-        /* --- La Carta --- */
+        /* Sello de corazón */
+        .seal {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            color: #fff;
+            z-index: 10;
+            transition: opacity 0.5s;
+        }
+
+        /* --- La Carta (Contenido) --- */
         .letter {
             position: absolute;
-            top: 10px;
-            left: 15px;
-            width: 270px;
-            /* Altura automática para ajustarse al contenido en móviles */
-            min-height: 380px; 
-            background: white;
-            border-radius: 10px;
+            bottom: 0; /* Empieza dentro del sobre */
+            left: 25px;
+            width: 300px;
+            height: 420px; /* Carta larga */
+            background: #fffdf9; /* Blanco papel */
+            border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.8s ease-in-out;
-            z-index: 4;
+            transition: transform 1s ease-in-out;
+            z-index: 4; /* Detrás del bolsillo al inicio */
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 15px;
+            padding: 20px;
             box-sizing: border-box;
             text-align: center;
+            border: 2px solid #ffe0e0;
         }
 
         .letter img {
-            width: 100%;
-            height: 140px; /* Altura fija para que no empuje los botones fuera */
-            object-fit: cover; /* Recorta la foto para que encaje lindo */
-            border-radius: 10px;
-            border: 3px solid #ff99aa;
-            margin-bottom: 10px;
+            width: 90%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 4px solid #ffccd5;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .letter h2 {
             font-family: 'Dancing Script', cursive;
-            color: #d63384;
-            margin: 5px 0;
-            font-size: 1.6rem;
+            color: #e60000;
+            margin: 15px 0 10px 0;
+            font-size: 2rem;
         }
         
         .letter p {
-            font-family: 'Arial', sans-serif;
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: #555;
-            margin: 5px 0 15px 0;
-            line-height: 1.4;
+            margin-bottom: 20px;
+            line-height: 1.5;
         }
 
+        /* Botón único */
         .btn-group {
-            display: flex;
-            gap: 15px;
-            margin-top: auto; /* Empuja los botones al final */
-            width: 100%;
-            justify-content: center;
-            padding-bottom: 10px;
-        }
-
-        .btn {
-            padding: 10px 25px; /* Botones más grandes para dedos */
-            border: none;
-            border-radius: 25px;
-            font-family: 'Pacifico', cursive;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: 0.2s;
-            /* Importante para que el touch funcione bien */
-            touch-action: manipulation; 
+            margin-top: auto;
         }
 
         .btn-yes {
-            background-color: #ff4d4d;
+            padding: 12px 40px;
+            border: none;
+            border-radius: 30px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            background: linear-gradient(to right, #ff4d4d, #ff0000);
             color: white;
-        }
-        
-        .btn-yes:active {
-            transform: scale(0.95);
+            box-shadow: 0 5px 15px rgba(255, 77, 77, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .btn-no {
-            background-color: #e0e0e0;
-            color: #555;
-            position: relative;
+        .btn-yes:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 77, 77, 0.6);
         }
 
-        /* --- Animaciones de apertura --- */
+        /* --- Clases para la animación de abrir --- */
         .open .envelope-flap {
             transform: rotateX(180deg);
-            z-index: 1;
+            z-index: 1; /* Se va al fondo */
+        }
+        
+        .open .seal {
+            opacity: 0;
         }
 
         .open .letter {
-            /* Sube un poco menos en móvil para que no se salga de la pantalla arriba */
-            transform: translateY(-160px); 
-            z-index: 8;
+            transform: translateY(-250px); /* Sube la carta */
+            z-index: 8; /* Se pone enfrente de todo */
         }
 
+        /* Texto de "Haz clic" */
         .click-hint {
             position: absolute;
             bottom: -50px;
             width: 100%;
             text-align: center;
-            color: #ff4d4d;
-            font-size: 1.1rem;
+            color: #ff3333;
+            font-weight: bold;
+            letter-spacing: 1px;
             animation: bounce 2s infinite;
         }
 
@@ -179,60 +197,66 @@
             60% {transform: translateY(-5px);}
         }
 
+        /* Mensaje final */
         .success-message {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.95);
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            border: 4px solid #ff4d4d;
             text-align: center;
+            z-index: 100;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            animation: popIn 0.5s ease-out;
         }
-        .success-message h1 {
-            color: #ff4d4d;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+        
+        @keyframes popIn {
+            from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
 
-        /* Ajustes específicos para pantallas muy pequeñas (iPhone SE, etc) */
-        @media (max-width: 380px) {
-            .container { transform: scale(0.8); margin-top: 20px; }
+        .success-message h1 {
+             font-family: 'Dancing Script', cursive;
+             font-size: 3rem;
+             color: #e60000;
+             margin: 0;
         }
     </style>
 </head>
 <body>
 
     <audio id="bgMusic" loop>
-        <source src="musica.mp3" type="audio/mpeg">
+        <source src="/ParaOmar/musica.mp3" type="audio/mpeg">
     </audio>
 
     <div class="container" id="container">
         <div class="envelope-wrapper" onclick="openEnvelope()">
             <div class="envelope-flap"></div>
+            <div class="seal">❤</div>
             <div class="envelope-pocket"></div>
             
             <div class="letter">
-                <img src="nuestra_foto.jpg" alt="Nosotros" onerror="this.src='https://via.placeholder.com/300x200?text=Tu+Foto'">
+                <img src="/ParaOmar/nuestra_foto.jpg" alt="Nosotros" onerror="this.src='https://via.placeholder.com/300x180?text=Foto+Pendiente'">
                 
-                <h2>Hola guapo...</h2>
-                <p>Eres lo mejor que me ha pasado y quiero preguntarte algo especial:</p>
-                <p><strong>¿Quieres ser mi San Valentín?</strong></p>
+                <h2>¡Hola mi amor!</h2>
+                <p>Tengo una pregunta muy importante que hacerte y no podía esperar más...</p>
+                <p style="font-weight: bold; font-size: 1.2rem;">¿Quieres ser mi San Valentín este 14 de febrero?</p>
                 
                 <div class="btn-group">
-                    <button class="btn btn-yes" onclick="sayYes(event)">¡SÍ!</button>
-                    <button class="btn btn-no" id="btnNo" onmouseover="moveButton()" ontouchstart="moveButton()">No</button>
+                    <button class="btn-yes" onclick="sayYes(event)">¡SÍ, ACEPTO! ❤️</button>
                 </div>
             </div>
-            <div class="click-hint">👆 Toca el sobre 👆</div>
+            <div class="click-hint">Haz clic para abrir tu carta 💌</div>
         </div>
     </div>
 
     <div class="success-message" id="successMsg">
-        <h1>¡Siiiii! ❤️</h1>
-        <p style="font-size: 1.5rem;">¡Sabía que aceptarías!</p>
-        <p>Te amo.</p>
+        <h1>¡Nos vemos el 14! ❤️</h1>
+        <p>Ya sabía que dirías que sí. Te amo.</p>
     </div>
 
     <script>
@@ -240,58 +264,39 @@
 
         function openEnvelope() {
             if (!isOpen) {
-                const container = document.getElementById('container');
-                container.classList.add('open');
+                document.getElementById('container').classList.add('open');
                 isOpen = true;
                 
+                // Música (Opcional)
                 const music = document.getElementById('bgMusic');
-                music.volume = 0.5;
-                // En móvil, el audio requiere un toque explícito del usuario a veces.
-                // Al estar dentro de la función onclick del sobre, debería funcionar.
-                music.play().catch(e => console.log("Audio bloqueado por navegador"));
+                music.volume = 0.4;
+                music.play().catch(() => console.log("Música no disponible o bloqueada"));
 
                 document.querySelector('.click-hint').style.display = 'none';
             }
         }
 
-        function moveButton() {
-            const btnNo = document.getElementById('btnNo');
-            
-            // Obtenemos las dimensiones de la pantalla
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            
-            // Calculamos nueva posición aleatoria
-            // Restamos el tamaño del botón (aprox 100px) para que no se salga
-            const newX = Math.random() * (width - 100);
-            const newY = Math.random() * (height - 50);
-
-            btnNo.style.position = 'fixed';
-            btnNo.style.left = newX + 'px';
-            btnNo.style.top = newY + 'px';
-        }
-
         function sayYes(event) {
-            event.stopPropagation();
+            event.stopPropagation(); // Evita cerrar el sobre
             
-            // Lluvia de corazones / confeti
-            const end = Date.now() + (15 * 1000);
-            const colors = ['#ff0000', '#ff4d4d', '#ffffff'];
+            // Lanzar confeti intenso
+            const duration = 3000;
+            const end = Date.now() + duration;
 
             (function frame() {
                 confetti({
-                    particleCount: 5,
+                    particleCount: 7,
                     angle: 60,
                     spread: 55,
                     origin: { x: 0 },
-                    colors: colors
+                    colors: ['#ff0000', '#ffcccc']
                 });
                 confetti({
-                    particleCount: 5,
+                    particleCount: 7,
                     angle: 120,
                     spread: 55,
                     origin: { x: 1 },
-                    colors: colors
+                    colors: ['#ff0000', '#ffcccc']
                 });
 
                 if (Date.now() < end) {
@@ -299,10 +304,29 @@
                 }
             }());
 
+            // Mostrar mensaje final
             setTimeout(() => {
-                document.getElementById('successMsg').style.display = 'flex';
+                document.getElementById('successMsg').style.display = 'block';
             }, 500);
         }
+
+        // --- Lluvia de corazones de fondo (Estilo V1) ---
+        function createBackgroundHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-rain');
+            heart.innerHTML = Math.random() > 0.5 ? '❤️' : '💖'; // Alterna entre dos tipos de corazón
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 4 + 's'; // Entre 4 y 7 segundos
+            heart.style.fontSize = Math.random() * 15 + 15 + 'px';
+            
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 7000);
+        }
+        // Iniciar lluvia suave
+        setInterval(createBackgroundHeart, 400);
     </script>
 </body>
 </html>
