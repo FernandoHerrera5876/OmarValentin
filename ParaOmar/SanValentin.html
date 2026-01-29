@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para mi Novio ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Pacifico&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            background-color: #fce4ec;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Evita scroll */
+            margin: 0;
+            font-family: 'Pacifico', cursive;
+            touch-action: none; /* Mejora la respuesta táctil */
+        }
+
+        .container {
+            position: relative;
+            /* Ajuste para que quede centrado visualmente en móvil */
+            margin-top: 50px; 
+            transform: scale(0.9); /* Un poco más pequeño por defecto para pantallas chicas */
+        }
+
+        /* --- El Sobre --- */
+        .envelope-wrapper {
+            position: relative;
+            background: #ff3333;
+            width: 300px;
+            height: 200px;
+            margin: 0 auto;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 110px solid #ff4d4d;
+            transform-origin: top;
+            transition: transform 0.6s ease-in-out, z-index 0.6s;
+            z-index: 6;
+        }
+
+        .envelope-pocket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid #e60000;
+            border-right: 150px solid #e60000;
+            border-bottom: 100px solid #cc0000;
+            border-top: 100px solid transparent;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            z-index: 7;
+        }
+
+        /* --- La Carta --- */
+        .letter {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            width: 270px;
+            /* Altura automática para ajustarse al contenido en móviles */
+            min-height: 380px; 
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.8s ease-in-out;
+            z-index: 4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .letter img {
+            width: 100%;
+            height: 140px; /* Altura fija para que no empuje los botones fuera */
+            object-fit: cover; /* Recorta la foto para que encaje lindo */
+            border-radius: 10px;
+            border: 3px solid #ff99aa;
+            margin-bottom: 10px;
+        }
+
+        .letter h2 {
+            font-family: 'Dancing Script', cursive;
+            color: #d63384;
+            margin: 5px 0;
+            font-size: 1.6rem;
+        }
+        
+        .letter p {
+            font-family: 'Arial', sans-serif;
+            font-size: 0.9rem;
+            color: #555;
+            margin: 5px 0 15px 0;
+            line-height: 1.4;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: auto; /* Empuja los botones al final */
+            width: 100%;
+            justify-content: center;
+            padding-bottom: 10px;
+        }
+
+        .btn {
+            padding: 10px 25px; /* Botones más grandes para dedos */
+            border: none;
+            border-radius: 25px;
+            font-family: 'Pacifico', cursive;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: 0.2s;
+            /* Importante para que el touch funcione bien */
+            touch-action: manipulation; 
+        }
+
+        .btn-yes {
+            background-color: #ff4d4d;
+            color: white;
+        }
+        
+        .btn-yes:active {
+            transform: scale(0.95);
+        }
+
+        .btn-no {
+            background-color: #e0e0e0;
+            color: #555;
+            position: relative;
+        }
+
+        /* --- Animaciones de apertura --- */
+        .open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .open .letter {
+            /* Sube un poco menos en móvil para que no se salga de la pantalla arriba */
+            transform: translateY(-160px); 
+            z-index: 8;
+        }
+
+        .click-hint {
+            position: absolute;
+            bottom: -50px;
+            width: 100%;
+            text-align: center;
+            color: #ff4d4d;
+            font-size: 1.1rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+        .success-message {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            text-align: center;
+        }
+        .success-message h1 {
+            color: #ff4d4d;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Ajustes específicos para pantallas muy pequeñas (iPhone SE, etc) */
+        @media (max-width: 380px) {
+            .container { transform: scale(0.8); margin-top: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="musica.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container" id="container">
+        <div class="envelope-wrapper" onclick="openEnvelope()">
+            <div class="envelope-flap"></div>
+            <div class="envelope-pocket"></div>
+            
+            <div class="letter">
+                <img src="nuestra_foto.jpg" alt="Nosotros" onerror="this.src='https://via.placeholder.com/300x200?text=Tu+Foto'">
+                
+                <h2>Hola guapo...</h2>
+                <p>Eres lo mejor que me ha pasado y quiero preguntarte algo especial:</p>
+                <p><strong>¿Quieres ser mi San Valentín?</strong></p>
+                
+                <div class="btn-group">
+                    <button class="btn btn-yes" onclick="sayYes(event)">¡SÍ!</button>
+                    <button class="btn btn-no" id="btnNo" onmouseover="moveButton()" ontouchstart="moveButton()">No</button>
+                </div>
+            </div>
+            <div class="click-hint">👆 Toca el sobre 👆</div>
+        </div>
+    </div>
+
+    <div class="success-message" id="successMsg">
+        <h1>¡Siiiii! ❤️</h1>
+        <p style="font-size: 1.5rem;">¡Sabía que aceptarías!</p>
+        <p>Te amo.</p>
+    </div>
+
+    <script>
+        let isOpen = false;
+
+        function openEnvelope() {
+            if (!isOpen) {
+                const container = document.getElementById('container');
+                container.classList.add('open');
+                isOpen = true;
+                
+                const music = document.getElementById('bgMusic');
+                music.volume = 0.5;
+                // En móvil, el audio requiere un toque explícito del usuario a veces.
+                // Al estar dentro de la función onclick del sobre, debería funcionar.
+                music.play().catch(e => console.log("Audio bloqueado por navegador"));
+
+                document.querySelector('.click-hint').style.display = 'none';
+            }
+        }
+
+        function moveButton() {
+            const btnNo = document.getElementById('btnNo');
+            
+            // Obtenemos las dimensiones de la pantalla
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            // Calculamos nueva posición aleatoria
+            // Restamos el tamaño del botón (aprox 100px) para que no se salga
+            const newX = Math.random() * (width - 100);
+            const newY = Math.random() * (height - 50);
+
+            btnNo.style.position = 'fixed';
+            btnNo.style.left = newX + 'px';
+            btnNo.style.top = newY + 'px';
+        }
+
+        function sayYes(event) {
+            event.stopPropagation();
+            
+            // Lluvia de corazones / confeti
+            const end = Date.now() + (15 * 1000);
+            const colors = ['#ff0000', '#ff4d4d', '#ffffff'];
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: colors
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+
+            setTimeout(() => {
+                document.getElementById('successMsg').style.display = 'flex';
+            }, 500);
+        }
+    </script>
+</body>
+</html>
